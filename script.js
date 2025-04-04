@@ -149,8 +149,36 @@ class Watermelon extends Fruit {
             ctx.fillStyle = "red";
             ctx.font = "40px Arial";
             ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2);
+
+            setTimeout(() => {
+                const playerName = prompt("Game Over! Enter your name:");
+                if (playerName) {
+                    saveScore(playerName, score);
+                    updateLeaderboard();
+                }
+            }, 500);
         }
     }
+    // Save the player's score to local storage
+function saveScore(name, score) {
+    const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+    leaderboard.push({ name, score });
+    leaderboard.sort((a, b) => b.score - a.score); // Sort by score in descending order
+    localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+}
+
+// Update the leaderboard display
+function updateLeaderboard() {
+    const leaderboardContainer = document.querySelector(".leaderboard-container ul");
+    const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+    leaderboardContainer.innerHTML = leaderboard
+        .slice(0, 10) // Show top 10 scores
+        .map(entry => `<li>${entry.name}: ${entry.score} points</li>`)
+        .join("");
+}
+
+// Initialize leaderboard on page load
+updateLeaderboard();
 
     animate();
 
